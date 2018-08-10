@@ -38,7 +38,7 @@ import { MessageBox } from 'mint-ui'
 export default {
   data () {
     return {
-      list:[
+        list:[
             {
                 center:'吐槽界面1',
                 backgroundColor:"#fff",
@@ -106,9 +106,7 @@ export default {
                 async:true,    //是否异步
                 url:url,
                 dataType:"json",    //跨域json请求一定是jsonp
-                data:JSON.stringify({"typeId":"1",
-                        "advContent":"建议测试",
-                        "advPhone":"13411111111"}),    //请求参数
+                data:JSON.stringify({}),    //请求参数
                 success: function(data) {
                     console.log('成功:',data)
                     self.arr=data.yxdAdviseTypeVOList
@@ -147,12 +145,13 @@ export default {
                 MessageBox('提示', '请写下您宝贵的意见');
                 return
             }
-            var type=''
+            var typeone=''
             for(var i in this.list){
-                if(this.list[i].backgroundColor=='red'){
-                    type=this.list[i].id
+                if(this.list[i].backgroundColor=='#26a2ff'){
+                    typeone=this.list[i].id
                 }
             }
+            console.log("dddddd",typeone)
             var  url="http://118.89.27.88:8080/zyyxd/yxdAdvise/adviseSubmit.do"
             $.ajax({
                 type:"post",    //请求方式
@@ -160,15 +159,26 @@ export default {
                 url:url,
                 dataType:"json",    //跨域json请求一定是jsonp
                 data:JSON.stringify({
-                    "typeId":type,
+                    "typeId":typeone,
                     "advContent":self.value,
                     "advPhone":self.phone
                 }),    //请求参数
                 success: function(data) {
-                    console.log('成功:',data)
-                    MessageBox.alert('哇，反馈建议提交成功。棒棒哒~').then(action => {
-                        self.$router.push({name:'Opinion0'})
-                    });
+                    console.log('成功:',{
+                            "typeId":typeone,
+                            "advContent":self.value,
+                            "advPhone":self.phone
+                        })
+                    if(data.code==0){
+                        
+                        MessageBox.alert('哇，反馈建议提交成功。棒棒哒~').then(action => {
+                            self.$router.push({name:'Opinion0'})
+                        });
+                    }else{
+                        MessageBox.alert(data.desc).then(action => {
+
+                        });
+                    }
                 },
                 error:function(data) {
                     console.log('失败:',data)
@@ -187,6 +197,10 @@ export default {
     },
     mounted() {
         this.list=[]
+        this.arr=[]
+        this.value=''
+        this.num=120
+        this.phone=''
         this.ajax()
     },
 }

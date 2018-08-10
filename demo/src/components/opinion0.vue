@@ -125,6 +125,9 @@ export default {
     this.flge=false
     this.getst()
   },
+  // activated() {
+  //   this.getst()
+  // },
 }
 </script>
 
