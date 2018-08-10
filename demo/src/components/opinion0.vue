@@ -1,21 +1,23 @@
 <template>
   <div class="opinion0">
     <zy-header :headtitle='$route.meta.title' three="意见与反馈" @rightBtn="rightBtn" :fixed='false'></zy-header>
-    <div class='center' v-if='false'>近期无评价记录</div>
-    <div class="opinion" ref='op'>
+    <div class='center' v-if='flge'>近期无评价记录</div>
+    <div class="opinion" ref='op' v-if="!flge">
       <div class="son" v-for="(item,index) in opone" :key="index">
         <!-- <p class="dian"></p> -->
         <p class="size">
           {{item.advContent}}
         </p>
-        <p class="right" @click="pulldown(index)">></p>
+        <p class="right" style="" >
+          <img src="../img/xll.png" style="width:0.1rem" @click="pulldown(index)" class="Img"/>
+        </p>
         <p class="time">{{item.createDateShow}}</p>
         <p class="da" v-if="item.pull" v-for='(value,index2) in push' :key="index2">
-          <span style='display: inline-block; width: 45%;text-align: left;'>{{value.advContent}}</span>
-          <span style='display: inline-block; width: 50%;text-align: right;'>{{value.createDateShow}}</span>
+          <span style='display: inline-block; width: 80%;text-align: left;'>{{value.advContent}}</span>
+          <span style='display: inline-block; width: 100%;text-align: right;'>{{value.createDateShow}}</span>
         </p>
       </div>
-      
+      <div class="dxian">我也是有底线的~</div>
     </div>
   </div>
 </template>
@@ -25,6 +27,7 @@ export default {
     return {
       opone:[],
       da:false,
+      flge:false,
       push:[]
     }
   },
@@ -35,15 +38,19 @@ export default {
     pulldown(index,e){
         let self=this
         var e=e||window.event
-        var right=document.querySelector('.right')
+        var right=document.querySelectorAll('.Img')
         if(this.opone[index].pull==false){
-          this.opone[index].pull=true
-          e.target.style.transform='rotate(90deg)'
+          for(var l in self.opone){
+            self.opone[l].pull=false
+            right[l].style.transform='none'
+          }
+            self.opone[index].pull=true
+            e.target.style.transform='rotate(90deg)'
         }else{
           this.opone[index].pull=false
           e.target.style.transform='rotate(0deg)'
         }
-        // console.log("请求的id：",self.opone[index].oldId)
+        self.push=[]
         var url="http://118.89.27.88:8080/zyyxd/yxdAdvise/hisAdviseChild.do"
        $.ajax({
           type:"post",    //请求方式
@@ -55,13 +62,12 @@ export default {
             'oldId':self.opone[index].oldId
           }),    //请求参数
           success: function(data) {
-              console.log('push:',data)
+            for(var i in data.yxdAdviseFollowList){
               var obj={}
-              for(var i in data.yxdAdviseFollowList){
-                obj.advContent=data.yxdAdviseFollowList[i].advContent
-                obj.createDateShow=data.yxdAdviseFollowList[i].createDateShow
-                self.push.push(obj)
-              }
+              obj.advContent=data.yxdAdviseFollowList[i].advContent
+              obj.createDateShow=data.yxdAdviseFollowList[i].createDateShow
+              self.push.push(obj)
+            }
           },
           error:function(data) {
               console.log('首贴失败:',data)
@@ -88,6 +94,9 @@ export default {
                 self.opone.push(obj)
               }
               console.log(self.opone)
+              if(self.opone.length==0){
+                self.flge=true
+              }
               setTimeout(function(){
                 self.setheight()
               },300)
@@ -113,6 +122,7 @@ export default {
     this.opone=[]
     this.da=false
     this.push=[]
+    this.flge=false
     this.getst()
   },
 }
@@ -136,14 +146,15 @@ export default {
       float: left;
       overflow-y: scroll;
       overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
     }
     .son{
-      padding: 0.1rem 0.1rem 0.1rem 0.3rem;
+      margin: 0rem 0.1rem 0.1rem 0.2rem;
       float: left;
-      width: 90%;
-      border-top: 1px solid #999;
-      background: #eee;
-      margin-top: 0.03rem;
+      width: 95%;
+      border-top: 0.01rem solid #ccc;
+      background: #ffffff;
+      padding-top: 0.1rem;
     }
     .size{
       width: 80%;
@@ -155,23 +166,26 @@ export default {
       font-size: 0.2rem;
       margin-top: 0.3rem;
       text-align: center;
-      transition: all 0.5s;
-      transform-origin: center;
-      transform: rotate(0deg)
+      /* transition: all 0.1s; */
+      /* transform-origin: center; */
+      
     }
     .time{
       float: right;
       width: 100%;
-      text-align: right;
-      margin-right: 0.4rem;
+      text-align: left;
+      -margin-right: 0.4rem;
+      margin-top: 0.1rem;
     }
     .da{
       float: left;
       padding-top: 0.1rem;
       width: 90%;
-      margin: 0.1rem auto;
-      border-top: 1px solid #999;
-      /* display: none */
+      /* display: none; */
+      background: rgb(230, 240, 250);
+      margin-top: 0.1rem;
+      padding: 0.05rem 0.1rem;
+      border-radius: 0.02rem;
     }
     .dian{
         width: 0.1rem;
@@ -181,5 +195,18 @@ export default {
         float: left;
         margin-top: 0.4rem;
         margin-right: 0.5rem;
+    }
+    .Img{
+      transition: all 0.1s;
+      transform-origin: center;
+    }
+    .dxian{
+      width: 100%;
+      height: 0.3rem;
+      text-align: center;
+      float: left;
+      line-height: 0.3rem;
+      color: #999;
+      background: #eee;
     }
 </style>

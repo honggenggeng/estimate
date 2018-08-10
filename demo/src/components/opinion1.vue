@@ -1,6 +1,7 @@
 <template>
   <div class="opinion0">
     <zy-header :headtitle='$route.meta.title' three="意见与反馈" :rightbtn='false' :fixed='false'></zy-header>
+    <div class="big" ref="Big">
     <div class="opinion">
         <p class="idea">意见类型</p>
         <div>
@@ -27,6 +28,7 @@
     <input class="tel" type="tel" v-model="phone" placeholder="请填写您的手机号"  :maxlength='11'/>
     <div class="btnn" @click="btn">
         提交
+    </div>
     </div>
   </div>
 </template>
@@ -92,7 +94,7 @@ export default {
                 this.list[i].backgroundColor='#fff'
                 this.list[i].color="#999"
             }
-            this.list[index].backgroundColor='red'
+            this.list[index].backgroundColor='#26a2ff'
             this.list[index].color="#fff"
         },
         ajax(){
@@ -127,15 +129,23 @@ export default {
                 obj.color="#999"
                 this.list.push(obj)
             }
-            this.list[0].backgroundColor='red'
+            this.list[0].backgroundColor='#26a2ff'
             this.list[0].color="#fff"
+            this.height()
         },
         btn(){
             let self=this
-            if(/^1[3|4|5|6|7|8|9]\d{9}$/.test(self.phone)){
+            if(self.phone.length>1){
+                if(/^1[3|4|5|6|7|8|9]\d{9}$/.test(self.phone)){
 
-            }else{
-                MessageBox('提示', '手机号码不正确');
+                }else{
+                    MessageBox('提示', '手机号码不正确');
+                    return
+                }
+            }
+            if(self.value.length<=0){
+                MessageBox('提示', '请写下您宝贵的意见');
+                return
             }
             var type=''
             for(var i in this.list){
@@ -165,6 +175,15 @@ export default {
                 }
             });
         },
+        height(){
+            let self=this
+            var innerHeight = window.innerHeight || document.documentElement.clientinnerHeight || document.body.clientinnerHeight
+            var big=document.querySelector(".big")
+            var height=innerHeight-self.$refs.Big.offsetTop
+            console.log(height)
+            big.style.height=height+'px'
+            big.style.backgroundColor='#eee'
+        },
     },
     mounted() {
         this.list=[]
@@ -180,14 +199,17 @@ export default {
         height:100%;
         width:100%;
         background:#eee;
+        float: left;
     }
     li{
+        font-size: 0.14rem;
+        border-radius: 0.01rem;
         list-style: none;
         float: left;
         height: 0.3rem;
         line-height: 0.3rem;
         text-align: center;
-        margin: 0.1rem 0.03rem;
+        margin: 0.1rem 0.08rem;
         background: #fff;
         padding: 0rem 0.05rem;
     }
@@ -196,18 +218,19 @@ export default {
         min-height:1.5rem;
         background:#eee;
         -margin-top:0.6rem;
-        padding:5%;
+        padding:5% 5% 2.8%;
+        float: left;
     }
     .idea{
         -float:left;
-        font-size: 0.18rem;
+        font-size: 0.16rem;
         width: 100%;
         text-align: left;
     }
     .you{
         color: #000;
         width: 50%;
-        font-size: 0.18rem;
+        font-size: 0.16rem;
         float: left;
     }
     .thod{
@@ -216,7 +239,7 @@ export default {
         text-align: right;
     }
     .area{
-        width:100%;
+        width:96%;
         font-size:0.15rem;
         border:none;
         cursor:default;
@@ -224,7 +247,8 @@ export default {
         -webkit-tap-heighlight-color:rgba(0,0,0,0);
         background:transparent;
         outline:none;
-        resize:none
+        resize:none;
+        padding: 0.1rem 0.1rem 0 0.05rem; 
     }
     .plus{
         width: 100%;
@@ -253,12 +277,12 @@ export default {
     }
     .phone{
         width: 100%;
-        height: 0.5rem;
+        height: 0.45rem;
         background: #eee;
-        line-height:0.5rem;
-        margin-left:0.1rem;
+        line-height:0.45rem;
+        margin-left:5%;
         color:#000;
-        font-size:0.18rem;
+        font-size:0.16rem;
         -border-top: 1px solid #999;
         -border-bottom: 1px solid #999;
     }
@@ -267,20 +291,21 @@ export default {
         height: 0.5rem;
         border: none;
         outline: none;
-        font-size: 0.18rem;
-        padding-left:0.1rem;
+        font-size: 0.16rem;
+        padding-left:5%;
         -border-bottom:1px solid #999;
         border-bottom: 1px solid #eee;
     }
     .btnn{
-        width: 80%;
-        height: 0.5rem;
-        line-height: 0.5rem;
+        width: 88%;
+        height: 0.45rem;
+        line-height: 0.45rem;
         text-align: center;
-        background: red;
+        background: #26a2ff;
         margin: 0.2rem auto;
         color: #fff;
-        font-size:0.18rem;
+        font-size: 0.18rem;
         letter-spacing: 0.1rem;
+        border-radius: 0.25rem;
     }
 </style>
